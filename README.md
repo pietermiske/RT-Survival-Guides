@@ -27,4 +27,4 @@ This repository contains my personal collection of practical survival guides (ak
 The following guides are currently in the pipeline: setup C2 infrastructure; external reconnaissance & OSINT gathering; more advanced payload development for EDR bypassing; and how to setup and conduct a phishing campaign.  
 
 ## Credit & References:
-The guides in this repo are based on my own notes that find their origin in multiple publicly available resources. Therefore, all the credits go to the great people in the infosec community that shared their findings, tools and tips with the public. This repository is meanly a tribute to their work. In the guides, references are made to the repo's and sometimes blogs were you can find these tools and techniques. 
+The guides in this repo are the product of my own notes that find their origin in multiple publicly and sometimes paid (e.g. CRTO, OSEP) resources. Therefore, all the credits go to the great people behind these courses, blog posts and tools. This repository is meanly a tribute to their work. In the guides, references are made to the repo's and sometimes blog posts were you can find the discribed tools and techniques. 
