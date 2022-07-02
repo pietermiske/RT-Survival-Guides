@@ -9,7 +9,7 @@ This repository contains my personal collection of practical survival guides (ak
 - [Elevate privileges on Linux](Guides/Linux_privesc.md)
 - [Active Directory domain reconnaissance](Guides/AD_domain_recon.md)
 - [Active Directory misconfiguration abuse & vulnerability exploitation](Guides/AD_domain_exploitation.md)
-- [Database enumeration and exploitation](Guides/AD_domain_recon.md)
+- [Database enumeration and exploitation](Guides/Database_exploitation.md)
 - [Lateral movement](Guides/Lateral_movement.md)
 - [Forest enumeration and exploitation](Guides/Forest_exploitation.md)
 - [Windows & Linux client payload development](Guides/Payload_development.md)
