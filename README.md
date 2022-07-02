@@ -21,7 +21,6 @@ This repository contains my personal collection of practical survival guides (ak
 - [External reconnaissance & OSINT gathering](Guides/External_recon.md) (under construction)
 - [Setup C2 infrastructure](Guides/C2_infra_setup.md) (under construction)
 - [Setup and conduct a phishing campaign](Guides/Phishing.md) (under construction)
-- [Single PDF document of all survival guides](Guides/RTSG.pdf) 
 
 ---
 ## Coming up:
