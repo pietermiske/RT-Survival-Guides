@@ -2,17 +2,17 @@
 >Author: Pieter Miske
 ---
 ### __Password recovery preperations:__
-##### _Password wordlists:_
+#### _Password wordlists:_
 - [PasswordList](https://github.com/Cyb3r4rch3r/PasswordList)
 - [Crackstation](https://crackstation.net/crackstation-wordlist-password-cracking-dictionary.htm) 
 
-##### _Create custom wordlist:_
+#### _Create custom wordlist:_
 - Targeted wordlist:
 	- 1\. Make small password list of key words associated with the target organisation and common words\. 
 	- 2\. Generate costum wordlist with variations based on the words: `hashcat --force --stdout -r /usr/share/hashcat/rules/best64.rule <name list with basic words> > output.txt`
 - Keyboard walk wordlist generator (e.g. ‘qwerty’, ‘1q2w3e4r’ and ‘6yHnMjU7’): based on the target region, select the correct keyboard layout \([kwprocessor](https://github.com/hashcat/kwprocessor)\): `kwp64.exe basechars\full.base keymaps\en-us.keymap routes\2-to-10-max-3-direction-changes.route -o keywalk.txt`
 
-##### _Create custom rule set:_
+#### _Create custom rule set:_
 - 1\. Create empty file with the extention ‘\.rule’ 
 - 2\. Add custom rules to the file and place them under each other:
 	- Append character: $x \(e\.g\. $2$0$2$1\)
@@ -20,7 +20,7 @@
 	- Uppercase all letters: u
 	- Duplicate entire word \(Welkom01Welkom01\): d
 
-##### _Create custom mask file:_
+#### _Create custom mask file:_
 - 1\. Create empty file with the extention ‘\.hcmask’
 - 2\. Add custom mask to file \(modify below example masks if needed\):
 	- Add one number or special character to word with length 5 to 9:
@@ -45,11 +45,11 @@
         ?l?u?d?s, ?1?1?1?1?1?1?1?1?1
         ```
 
-##### _Modify excisting wordlist:_
+#### _Modify excisting wordlist:_
 - Modify wordlist  to specific password length: `grep '\w\{7,20\}' </path/to/wordfile> > newfile.txt`
 - Create wordlist with specific password length and characteristics: `grep '[a-zA-Z0-9]\{7\}' </path/to/wordfile>` 
 
-##### _Prepare large hash file for cracking:_
+#### _Prepare large hash file for cracking:_
 - Create hash list from NTLM hash dump:
 	- Filter usernames \(and domain name if available\) from impacket’s secretsdump: `cat hashdump.txt| cut -d ":" -f1 | grep '^[a-zA-Z]' | uniq | tee users.txt`
 	- Filter NT hashes from impacket’s secretsdump: `cat hashdump.txt| cut -d ":" -f4 | uniq |tee nthashes.txt`
@@ -60,7 +60,7 @@
 
 ---
 ### __Password recovery techniques:__
-##### _Cracking techniques:_
+#### _Cracking techniques:_
 - Identify hashtype and select hash type code:
 	- Hash type identification tool: `hashid <hash string>`
 	- Via [hashcat website](ohttps://hashcat.net/wiki/doku.php?id=example_hashes) 
@@ -73,7 +73,7 @@
 	- Complete custom charset: `hashcat -m <hash type code> <hash file> -a 3 -1 "?l?u?d?s" "<add ?1 per char to specify word length>"`
 - Wordlist \+ mask based hash cracking \(for wordlist \+ mask use ‘\-a 6’ for mask \+ wordlist use ‘\-a 7’\): `hashcat -m <hash type code> <hash file> -a 6 <wordlist> <mask (e.g. ?d?d?d?d)>` 
 
-##### _Extract and crack hashes from secured files:_
+#### _Extract and crack hashes from secured files:_
 - Office documents: 
 	- 1: Extract hash from \.docx document: `python office2john.py dummy.docx > hash.txt`
 	- 2: Crack hash: `john -wordlist=/<wordlist (e.g. rockyou.txt)> hash.txt`

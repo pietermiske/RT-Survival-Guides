@@ -2,11 +2,11 @@
 >Author: Pieter Miske
 ---
 ### __Cobalt strike:__
-##### _Start team server and client:_
+#### _Start team server and client:_
 - Start the CS team server: `./teamserver <IP used by the TS> <new password for TS> <malleable.profile>`
 - Start the CS client: `./cobaltstrike`
 
-##### _Basic beacon commands:_
+#### _Basic beacon commands:_
 - Listing of the available commands: `help`
 - Show the help menu of the selected module: `help <module>`
 - List the running jobs of beacon: `jobs`
@@ -21,8 +21,9 @@
 - Upload file: `upload </path/to/file.exe>`
 - Change 'Last Modified" timestamp of an altered file to the timestamp of the original file: `timestomp <new file> <original file>`
 - Convert returned error code to error message: `net helpmsg <code>`
+- Host a file via the team server: Attacks > Web drive\-by > Host File
 
-##### _Aggressor scripts:_
+#### _Aggressor scripts:_
 The following aggressor scripts give some extra functionality to CS\. 
 - [InlineExecute\-Assembly](https://github.com/anthemtotheego/InlineExecute-Assembly): this BOF allows in process \.NET assembly execution as an alternative for execute\-assembly module: `inlineExecute-Assembly --dotnetassembly /<path to tool> --assemblyargs <args> --amsi --etw <--pipe | --mailslot> <pmisvc> --appdomain <ConsoleApp1>`
 - [Cobalt\-arsenal](https://github.com/mgeeky/cobalt-arsenal): set of aggressor scripts that add or improve default cobalt strike functionalilities\.
@@ -31,7 +32,7 @@ The following aggressor scripts give some extra functionality to CS\.
 
 ---
 ### __PoshC2:__
-##### _Running PoshC2:_
+#### _Running PoshC2:_
 - Download and install the open source [PoshC2](https://github.com/nettitude/PoshC2) project: `sudo ./Install.sh`
 - Project management: `sudo posh-project <-n <project_name> | -s <project-to-switch-to> | -l (lists projects) | -d <project-to-delete> | -c (shows current project)>`
 - Edit the configuration for your project \(atleast modify BindIP/BindPort and PayloadCommsHost\): `sudo posh-config`
@@ -40,15 +41,17 @@ The following aggressor scripts give some extra functionality to CS\.
 - Update PoshC2: `posh-update`
 - Start new display \(log\) panel \(use this if team members log in via ssh\): `posh-log`
 
-##### _Main menu commands:_
+#### _Main menu commands:_
 - Add compromised credentials/hashes to the database \(accepts only password or hash\): `creds -add -domain=<domain> -username=<username> -password='<password>'|-hash=<hash>`
 - Check all compromised \(stored\) credentials: `creds`
 - Message other team members: `message "<Message to broadcast>"`
 - Get a detailed overview in both html/cvs format about compromised systems, commands executed on each system and gathered \(if added\) credentials: `generate-reports`
 - Quick overview of compromised hosts, used URL's, files uploaded and \(if added\) gathered credentials: `opsec`
 - Show detailed information about the running server: `show-serverinfo`
+- Host new file/image/exploit by following the wizard \(make sure to add /<file name> when specifing the URL path\) \(hosted files can not be disabled\): `add-hosted-file <name file>`
+- List hosted files: `show-hosted-files`
 
-##### _General Commands:_
+#### _General Commands:_
 - Get overview of all command: `help`
 - Get overview of all available modules: `listmodules`
 - Change beacon call\-back time of running implant \(run in implant interface\): `beacon <number in seconds>s`
@@ -62,12 +65,15 @@ The following aggressor scripts give some extra functionality to CS\.
 	- 1\. Add C\# \.NET assembly in the ‘modules’ folder and load the module: `loadmodule <name executable>`   
 	- 2\. Run C\# binary \(if the program is not giving any output, the only solution is to respawn a C\# implant\): `run.exe <namespace>.<classname> <assembly name> <args>`
 
-##### _Tips & Tricks:_
+#### _Tips & Tricks:_
 - In the file “/PoshC2/resources/urls\.txt” you can specify multiple URL's that the beacons will use\.
 - PowerShell implants will automaticly migrade to a new process that is specified in the posh\-config file "DefaultMigrationProcess" attribute\.  
 - Quickstart document can be found in "/var/poshc2/<project name>/quickstart\.txt"
 - All payloads are stored in "/var/poshc2/<project name>/payloads/"
 - Create an alias for a C\# assembly or powershell script "/opt/Poshc2/poshc2/client/Alias\.py"
 - All downloaded files and screenshots are stored in the directory "/var/poshc2/<name project>/downloads/"
-
+- Run Beacon Object Files (BOF) with PoshC2:
+    - 1\. Download and compile the [RunOF](https://github.com/nettitude/RunOF) project (including the object files in the 'beacon_funcs' folder)
+    - 2\. Base64 encode a BOF object file that you want to run \(e.g. whoami from [CS-Situational-Awareness-BOF](https://github.com/trustedsec/CS-Situational-Awareness-BOF)\)
+    - 3\. Run the BOF (RunOF): `run-exe RunOF.Program RunOF -a <base64 string> (-Z:<string arguments>)`
 
